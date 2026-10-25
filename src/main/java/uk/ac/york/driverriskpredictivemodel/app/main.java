@@ -58,10 +58,10 @@ public class main {
         } else {
             model = NeuralNetworkConfig.build(8, 2);
             System.out.println("Created new model");
-         }
+       }
 
         ModelTrainer trainer = new ModelTrainer();
-        trainer.train(model, data.trainIterator, data.testIterator, 20);
+        trainer.train(model, data.trainIterator, data.testIterator,20);
 
         // Evaluation now uses run folder
         ModelEvaluator evaluator = new ModelEvaluator();

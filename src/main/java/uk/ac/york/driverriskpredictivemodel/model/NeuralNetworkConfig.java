@@ -30,10 +30,12 @@ public class NeuralNetworkConfig {
                         .activation(Activation.RELU)
                         .build())
                 .layer(new DenseLayer.Builder()
+                        .nIn(32)
                         .nOut(16)
                         .activation(Activation.RELU)
                         .build())
                 .layer(new OutputLayer.Builder()
+                        .nIn(16)
                         .lossFunction(new LossMCXENT(classWeights))  // Correct approach
                         .activation(Activation.SOFTMAX)
                         .nOut(numClasses)
@@ -44,5 +46,10 @@ public class NeuralNetworkConfig {
         model.init();
 
         return model;
+
+        // discuss based on the metrics and how it compare with other studies
+        // Add table summary to display results
+        // Evaluate results
+        // Add implementation detalils
     }
 }

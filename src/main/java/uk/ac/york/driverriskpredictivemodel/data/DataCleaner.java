@@ -62,7 +62,8 @@ public class DataCleaner {
                     continue;
 
                 // Validate numeric
-                if (!( isNumeric(tripId) && isNumeric(driverId) && isNumeric(speed) && isNumeric(acceleration) && isNumeric(steering)
+                if (!( isNumeric(tripId) && isNumeric(driverId) && isNumeric(speed)
+                        && isNumeric(acceleration) && isNumeric(steering)
                         && isNumeric(duration) && isNumeric(distance) && isNumeric(brake)
                         && isNumeric(lane) && isNumeric(label)))
                     continue;

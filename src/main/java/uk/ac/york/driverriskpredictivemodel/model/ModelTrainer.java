@@ -12,15 +12,15 @@ import java.io.IOException;
 
 public class ModelTrainer {
 
-    String resultsFile = GlobalVariables.RESULTPATH.toString();
-    String lossFile = GlobalVariables.LOSSPATH.toString();
+    String resultsFilePath = GlobalVariables.RESULTPATH.toString();
+    String lossFilePath = GlobalVariables.LOSSPATH.toString();
     private final String runFolder;
 
     public ModelTrainer() {
         String time =
                 java.time.LocalDateTime.now().toString().replace(":", "-");
 
-        this.runFolder = "docs/Experiments/run_" + time;
+        this.runFolder = "docs/experiments/run_" + time;
         new File(runFolder).mkdirs();
     }
 
@@ -33,8 +33,8 @@ public class ModelTrainer {
                       DataSetIterator test,
                       int epochs) throws IOException {
 
-        String resultsFile = runFolder + "/results.csv";
-        String lossFile    = runFolder + "/loss.csv";
+        String resultsFile = runFolder + resultsFilePath;
+        String lossFile    = runFolder + lossFilePath;
 
         try (FileWriter fw = new FileWriter(resultsFile)) {
             fw.write("epoch,accuracy,precision,recall,f1\n");

@@ -1,107 +1,55 @@
-# Driver Risk Prediction System (MSc Project – University of York)
+# Driver Risk ML Pipeline
 
-This project implements a deep-learning based driver risk prediction system using Java and DeepLearning4J (DL4J).
+An MSc project at the University of York exploring driver-risk classification from vehicle telemetry using Java, DeepLearning4J, DataVec, and ND4J.
 
-The system predicts whether a driving event is **risky (anomalous)** or **safe** based on vehicle telemetry data.
+## Pipeline
 
-## Project Structure
+~~~text
+raw CSV -> cleaning -> train/test split -> data iterators
+        -> neural-network training -> evaluation -> saved model and charts
+~~~
 
-driver-risk/
-├─ pom.xml
-├─ README.md
-├─ docs/
-│   ├─ DissertationDraft.md
-│   ├─ SystemArchitecture.png
-│   ├─ DatasetDescription.md
-│   └─ Experiments/
-│       ├─ hyperparameters.md
-│       ├─ results.csv
-│       └─ confusion-matrix.png
-└─ src/
-└─ main/
-└─ java/
-└─ uk/ac/york/driverriskpredicitivemodel/
-├─ data/
-│   ├─ DataLoader.java
-│   ├─ DataCleaner.java
-│   ├─ DataTransformer.java
-│   └─ TrainTestSplitter.java
-│
-├─ model/
-│   ├─ NeuralNetworkConfig.java
-│   ├─ ModelTrainer.java
-│   ├─ ModelEvaluator.java
-│   ├─ ModelSaver.java
-│   └─ Predictor.java
-│
-├─ util/
-│   ├─ CSVUtils.java
-│   ├─ NormalisationUtils.java
-│   └─ PlotUtils.java
-    └─ ChartGenerator.java
-│
-└─ app/
-    ├─ Main.java
-    └─ DemoPredictor.java
-    └─ BatchPredictor.java
-    └─ DriverRiskAggregator.java
+The project includes single-event and batch prediction entry points, trip-level aggregation, and experiment comparison utilities. The target label is anomalous_event: 0 means safe and 1 means risky in the dataset.
 
+## Build
 
-## Features Used
-- speed
-- acceleration
-- steering angle
-- trip duration
-- trip distance
-- brake usage
-- lane deviation
-- weather conditions
+Requires JDK 23 or newer and Maven. The first build downloads native ND4J dependencies and can be large.
 
-## Label
-The prediction target is: anomalous_event (0 = Safe, 1 = Risky)
+~~~sh
+mvn -B compile
+~~~
 
-## How to Run
-    Raw Dataset
-        ↓
-    DataCleaner
-        ↓
-    clean_data.csv
-        ↓
-    Main (Training + Evaluation)
-        ↓
-    driver-risk-model.zip
-        results.csv
-        loss.csv
-    confusion-matrix.csv
-        ↓
-    ChartGenerator (optional)
-        ↓
-    training-accuracy.png
-    training-loss.png
+## Run
 
-If using Maven from terminal
-mvn clean compile
+Run commands from the repository root. Place the input CSV at:
 
+~~~text
+dataset/raw/driver_behavior_route_anomaly_dataset_with_derived_features.csv
+~~~
 
+~~~sh
+mvn exec:java "-Dexec.mainClass=uk.ac.york.driverriskpredictivemodel.app.main"
+mvn exec:java "-Dexec.mainClass=uk.ac.york.driverriskpredictivemodel.app.DemoPredictor"
+mvn exec:java "-Dexec.mainClass=uk.ac.york.driverriskpredictivemodel.app.BatchPredictor"
+~~~
 
-# Load raw data, clean data, split to test and train data, Train model
-mvn exec:java -Dexec.mainClass="uk.ac.york.driverriskpredictivemodel.app.Main"
+The training class is named lowercase main in the existing source. The training entry point reuses processed train/test files when present and loads the saved model when available, so a rerun is not automatically a fresh experiment. Review and archive the existing artifacts before choosing to regenerate them.
 
-# Charts
-mvn exec:java -Dexec.mainClass="uk.ac.york.driverriskpredictivemodel.util.ChartGenerator"
+Paths are centralised in GlobalVariables. Prediction entry points also have their own input assumptions; inspect those before supplying a different dataset.
 
-# Single prediction
-mvn exec:java -Dexec.mainClass="uk.ac.york.driverriskpredictivemodel.app.DemoPredictor"
+## Source map
 
-# Batch prediction
-mvn exec:java -Dexec.mainClass="uk.ac.york.driverriskpredictivemodel.app.BatchPredictor"
+| Package | Responsibility |
+|---|---|
+| data | Loading, cleaning, splitting, and transformation |
+| model | Network configuration, training, evaluation, persistence |
+| app | Training and prediction entry points |
+| util | Charts, confusion matrices, and experiment comparisons |
 
+Experiment outputs are under docs/experiments; the saved model is under dataset. Results belong to a specific dataset, split, and training run. No accuracy claim is made here without the corresponding experiment evidence.
 
-Technologies
-    Java 23
-    Deeplearning4J
-    DataVec
-    ND4J
-    Maven
+## Evaluation limitations
 
+This is a research prototype. Its predictions are not a validated assessment of an individual driver's safety. Dataset provenance, leakage prevention, class balance, split strategy, and threshold selection affect how results should be interpreted.
 
+See [the reproducibility checklist](docs/reproducibility.md).
